@@ -1,4 +1,4 @@
-window.onload = window.onresize = () =>{
+window.addEventListener('load', () =>{
     const canvas = document.querySelector("#canvas");
     const ctx = canvas.getContext("2d");
 
@@ -11,7 +11,7 @@ window.onload = window.onresize = () =>{
     //variables
     let painting = false;
 
-    function startPosition(){
+    function startPosition(e){
         painting = true;
         draw(e);
     }
@@ -26,17 +26,38 @@ window.onload = window.onresize = () =>{
         ctx.lineWidth=10;
         ctx.lineCap = 'round';
 
-        ctx.lineTo(e.clientX, e.clientY);
+        ctx.lineTo(
+            (e.targetTouches[0] ? e.targetTouches[0].pageX : e.changedTouches[e.changedTouches.length-1].pageX)
+        , (e.targetTouches[0] ? e.targetTouches[0].pageY : e.changedTouches[e.changedTouches.length-1].pageY)
+        );
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(e.clientX, e.clientY);
+        ctx.moveTo(
+            (e.targetTouches[0] ? e.targetTouches[0].pageX : e.changedTouches[e.changedTouches.length-1].pageX)
+            , (e.targetTouches[0] ? e.targetTouches[0].pageY : e.changedTouches[e.changedTouches.length-1].pageY)
+            );
     }
 
     //eventListeners
+
+    ['mousedown', 'touchstart'].forEach(function(e) {
+        window.addEventListener(e, startPosition);
+      });
+
+    ['mouseup', 'touchend'].forEach(function(e) {
+        window.addEventListener(e, finishedPosition);
+      });
+
+    ['mousemove', 'touchmove'].forEach(function(e) {
+        window.addEventListener(e, draw);
+      });
+     
+
+    /*
     canvas.addEventListener("mousedown touchstart", startPosition);
     canvas.addEventListener("mouseup touchend", finishedPosition);
-    canvas.addEventListener("mousemove touchmove", draw);
+    canvas.addEventListener("mousemove touchmove", draw); */
 
 
 });
